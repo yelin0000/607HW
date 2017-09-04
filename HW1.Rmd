@@ -1,0 +1,49 @@
+---
+title: "HW1"
+author: "Lin Ye"
+date: "August 30, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Transforming table
+
+
+1. Reading data from the source site
+
+```{r}
+data <- read.table(file="https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data",header=FALSE, sep=",")
+
+```
+
+2. Take subset of data and rename the columns
+
+```{r}
+
+subset_mushroom <-data.frame(head(data[1:5],10))
+
+colnames(subset_mushroom) <- c("class","shape","surface","color","bruises" )
+
+subset_mushroom
+
+
+
+```
+
+3. Transform values in table
+```{r}
+
+subset_mushroom$class_desc<-NA
+  
+subset_mushroom$class_desc[subset_mushroom$class == "p"] <- "poisonous"
+subset_mushroom$class_desc[subset_mushroom$class == "e"] <- "edible"
+
+subset_mushroom2<-subset_mushroom[,c(6,2,3,4,5)]
+
+subset_mushroom2
+
+```
