@@ -1,0 +1,105 @@
+---
+title: "HW3"
+author: "Lin Ye"
+date: "September 13, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library(stringr)
+ raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"  
+
+```
+
+###3.a)
+
+```{r}
+name <- unlist(str_extract_all(raw.data,"[[:alpha:]., ]{2,}"))
+name
+```
+
+
+```{r}
+name1 <- sub(" [A-z]{1}\\. "," ",name)
+name1
+name2 <- sub("(\\w+),\\s(\\w+)","\\2 \\1", name1)
+name2
+name3 <-str_replace_all(name2,"[[:alpha:]]{2,}\\.\\s+",""); 
+name3
+
+
+```
+
+###b)
+
+```{r}
+has_title<-str_detect(name2,"[A-z]{2,3}\\. ")
+
+first_last <-data.frame(name3,has_title)
+first_last
+```
+
+###c)
+```{r}
+second_name <-str_detect(name, "[A-Z]\\.")
+
+first_last2 <-data.frame(first_last, second_name)
+first_last2
+```
+
+###4 a)
+it's a string that ends with a dollar sign and has one or more digits in front of the $ 
+```{r}
+exp1 <- c("19w$", "0$1234$", "33w44$")
+
+unlist(str_extract_all(exp1, "[0-9]+\\$"))
+```
+
+
+b)The string length is between 1 to 4 and only lower case
+
+```{r}
+exp2 <- c("emergency", "hill", "13k", "Week", "by")
+unlist(str_extract_all(exp2, "\\b[a-z]{1,4}\\b"))
+```
+
+
+c)The string that ends with .txt
+
+```{r}
+exp3 <- c("abc.txt", "hi.txt.yyy", "efg.txt")
+unlist(str_extract_all(exp3, ".*?\\.txt$"))
+```
+
+d)It's a string which contains 2 digits slash 2 digits slash and 4 digits.
+```{r}
+exp4 <- c("10/14/2016", "666/44/21", "hello10/14/1988world")
+unlist(str_extract_all(exp4, "\\d{2}/\\d{2}/\\d{4}"))
+```
+
+
+e)It's a string similar to html, contains open tag with a close tag of same content. 
+```{r}
+exp5<- c("<p>hello there</p>", "<head>happy</>")
+unlist(str_extract_all(exp5, "<(.+?)>.+?</\\1>"))
+
+```
+
+###9
+
+
+```{r}
+
+secret<-"clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0TanwoUwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigOd6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr"
+
+secret <-unlist(str_extract_all(secret, "[[:upper:].]{1,}"))
+secret <- paste(secret, collapse = "")
+secret <- str_replace_all(secret, pattern = "\\.", " ")
+
+secret
+```
