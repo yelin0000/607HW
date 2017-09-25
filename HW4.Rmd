@@ -1,0 +1,72 @@
+---
+title: "Project 1"
+author: "Lin Ye"
+date: "September 24, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(stringr)
+
+```
+
+First read data file from github
+
+```{r}
+
+filePath <- "https://raw.githubusercontent.com/yelin0000/607HW/master/tournament.txt"
+  
+file<-read.table(filePath,header=FALSE,sep = "\n")
+
+
+# Remove headings
+file_data<-file[5:nrow(file),]
+
+# Extract information by rows
+FirstSet <- file_data[seq(1, length(file_data), 3)]
+SecondSet <- file_data[seq(2, length(file_data), 3)]
+
+```
+#Resulting Sets
+```{r}
+head(FirstSet)
+
+head(SecondSet)
+
+```
+
+#Insert individual data points
+```{r}
+PairID <- str_extract(FirstSet, "\\d+")
+PlayerName <- str_trim(str_replace_all(str_extract(FirstSet, "[[:alpha:]].+?[|]"),"[|]","")) 
+State <- str_extract(SecondSet, "\\w+")
+Points <- as.numeric(str_replace_all(str_extract(FirstSet,"[|][:digit:][:punct:][:digit:]"),"[|]",""))
+Rating <- as.integer(str_replace_all(str_extract(SecondSet,"R:[:space:]+[:digit:]+"),"R:[:space:]",""))
+Opponents <-str_extract_all(str_extract_all(FirstSet,"[WDL]{1}[:space:]+[:digit:]+"),"[:digit:]+")
+
+Opponents <- str_extract_all(str_extract_all(FirstSet, "\\d+\\|"), "\\d+")
+
+CSVTable<-data.frame(PairID, PlayerName, State, Points, Rating);
+
+head (CSVTable)
+
+
+```
+#Calculating opponents' average rating
+
+```{r}
+
+#Having Trouble producing the average of opponents average score
+#Will skip this portion
+
+
+```
+
+
+#Write out resulting file to csv
+```{r}
+write.csv(CSVTable,file = "Chess.csv")
+
+```
