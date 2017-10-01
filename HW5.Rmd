@@ -1,0 +1,73 @@
+---
+title: "HW#5"
+author: "Lin Ye"
+date: "September 28, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(stringr)
+```
+
+First we load in the data
+
+```{r}
+
+#FilePath <-"C:\\Users\\lin\\Documents\\Data 607\\FlightInfo.csv";
+
+FilePath<-"https://raw.githubusercontent.com/yelin0000/607HW/master/FlightInfo.csv"
+Flight_Tbl<-read.csv(FilePath, sep=",")
+
+```
+
+Let's cleanup the column names
+
+```{r}
+
+colnames(Flight_Tbl)[1:2]=c("Region","OnTime")
+
+Flight_Tbl
+```
+
+We need to remove the blank row, and fill in the blank values on Region column
+```{r}
+
+# remove NA 
+
+##Flight_Tbl2= Flight_Tbl[!is.na(Flight_Tbl$Los.Angeles),]
+Flight_Tbl3 = Flight_Tbl %>% filter(!is.na(Los.Angeles))
+
+unique_col = as.character(unique(Flight_Tbl3[Flight_Tbl3$Region!="",]$Region))
+
+test = Flight_Tbl3 %>% filter(OnTime=="delayed") %>% mutate(Region=unique_col)
+
+Flight_Tbl3 =rbind(Flight_Tbl3,test)
+Flight_Tbl3 = Flight_Tbl3 %>% filter(Region!="")
+
+Flight_Tbl3 = Flight_Tbl3 %>% arrange(Region)
+
+Flight_Tbl3.2 = gather(Flight_Tbl3,key,value,-Region,-OnTime)
+```
+
+Replace 'dot' with 'space'
+```{r}
+
+colnames(Flight_Tbl3.2)[3:4]=c("City","Miles")
+
+Flight_Tbl3.2$City=gsub("Los.","Los ",Flight_Tbl3.2$City)
+
+Flight_Tbl3.2$City=gsub("San.","San ",Flight_Tbl3.2$City)
+
+```
+
+write the csv to work directory
+
+
+```{r}
+
+write.csv(Flight_Tbl3.2,"FlightCleaned.csv",row.names = FALSE)
+
+```
