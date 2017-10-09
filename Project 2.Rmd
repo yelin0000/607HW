@@ -1,0 +1,121 @@
+---
+title: "Project 2"
+author: "Lin Ye"
+date: "October 6, 2017"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+
+
+```
+In This project, Im going to analyze the store performance. The tables are coming in messy format, and I will transform the tables to achieve my analysis
+
+##Finding Total Sales, and Percentage of Two Regions
+
+The original table listed East and West in two seperate colums.
+
+Getting data, display messy form
+```{r}
+FilePath <-"https://raw.githubusercontent.com/yelin0000/607HW/master/sales_summary.csv";
+sales_temp <-read.csv(FilePath, sep=",")
+
+head(sales_temp)
+dim(sales_temp)
+
+```
+Start transformation
+```{r}
+
+sales_temp1 <- gather(sales_temp,key,Value,-Day, -WeekDay:-DayOfYear, na.rm = TRUE)
+sales_temp1
+```
+
+Once we tidy up the data we calculate the total sales and percentage of each region. From the data, West is generating slight more sales than East
+```{r}
+
+sales_temp2 <- sales_temp1 %>% 
+  separate(key, c("Region", "Metrics"), 4) %>% 
+  spread(Metrics, Value)  %>%
+  arrange(Region,DayOfYear)
+sales_temp2
+
+TotalSales<-sum(sales_temp2$NetSales)
+
+EastPercent<-sum(sales_temp2$NetSales[sales_temp2$Region=="East"])*100/TotalSales
+WestPercent<-sum(sales_temp2$NetSales[sales_temp2$Region=="West"])*100/TotalSales
+
+c(TotalSales, EastPercent,WestPercent)
+
+```
+
+
+
+##Sales Qty by Week
+
+In this sample, the table listed units sold in 4 weeks of Oct. We want to list the units sold by week
+
+Getting data 
+```{r}
+FilePath2 <-"https://raw.githubusercontent.com/yelin0000/607HW/master/Sales.csv";
+sales_temp3 <-read.csv(FilePath2, sep=",")
+
+sales_temp3
+```
+Tidy data
+```{r}
+
+sales_temp4 <- gather(sales_temp3,key,Qty,-Account.Number:-Week, na.rm = TRUE) 
+tail(sales_temp4)
+
+
+sales_temp5 <- sales_temp4 %>% 
+  filter(Qty !="-") %>%
+  separate(key, c("X","WeekBegin"),1) %>%
+  select (-c(Week,X)) 
+
+
+sales_temp6<-mutate(sales_temp5,StoreName = ifelse(grepl("919", Account.Number), "Flatiron","BroadWay"))
+
+sales_temp6
+
+
+```
+
+##Average Sales per Transactions
+In this example, we want to find out the spread of change of average sales per trasaction year over year by day of week 
+
+```{r}
+
+FilePath3 <-"https://raw.githubusercontent.com/yelin0000/607HW/master/AST.csv";
+  
+#"C:\\Users\\lin\\Documents\\DB\\AST.csv";
+
+AST_temp<-read.csv(FilePath3,sep=",")
+AST_temp
+```
+
+tidy data.
+
+The change of AST year over year is on average 10%
+```{r}
+AST_temp1<-mutate(AST_temp,YearLabel = ifelse(grepl("2017", Year), "ThisYear","LastYear")) 
+
+AST_temp2<-  gather(AST_temp1,Month,AST,-Year,-YearLabel,-WeekDay) %>%
+  arrange(Month,WeekDay) %>%
+  select(-c(Year)) %>%
+  spread(YearLabel, AST) 
+
+ASt_temp3 <- mutate(AST_temp2,AST_Diff=ThisYear-LastYear,AST_Chg=((ThisYear/LastYear)-1)*100)
+
+summary(ASt_temp3$AST_Chg)
+
+
+```
