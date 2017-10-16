@@ -1,18 +1,21 @@
-
 [
+  
 	{
-        "Title": "History of Love",
+         "Title": "History of Love",
          "Author": "Nicole Krauss",
          "Year": "2005"
-	},
+},
+
 	 {
-         "Title": "Freaknomics",
+          "Title": "Freaknomics",
          "Author": "Steven Levitt, Stephen Dubner",
          "Year": "2005"
-	},
-	 {
-	 "Title": "The Prize",
+},
+
+	{
+       	 "Title": "The Prize",
          "Author": "Daniel Yergin",
          "Year": "1990"
-	}
+  }
+
 ]
