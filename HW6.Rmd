@@ -1,0 +1,65 @@
+---
+title: "HW6: Loading Different Formats"
+author: "Lin Ye"
+date: "October 14, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(XML)
+library(RCurl)
+library(jsonlite)
+```
+
+##Reading from html
+
+The resulting table is a list. 
+
+```{r}
+
+reading_url <- getURL("https://raw.githubusercontent.com/yelin0000/607HW/master/readinglist.html")
+reading.html <- readHTMLTable(reading_url, header = TRUE)
+reading.html
+class(reading.html)
+
+str(reading.html)
+
+```
+
+##Reading from xml
+
+The resulting table is a dataframe, we needed to do an extra step of converting xml format into a table format. 
+
+```{r}
+
+reading_xmlpath <- getURL("https://raw.githubusercontent.com/yelin0000/607HW/master/readinglist.xml",ssl.verifyPeer=FALSE)
+
+reading.xml <- xmlTreeParse(reading_xmlpath, useInternal = TRUE)
+reading.xml
+
+reading.xml2 <- xmlToDataFrame(reading.xml)
+reading.xml2
+
+class(reading.xml)
+class(reading.xml2)
+
+str(reading.xml2)
+
+
+```
+
+##Reading from json
+
+The resulting table is a list. 
+
+```{r}
+json_path<-"https://raw.githubusercontent.com/yelin0000/607HW/master/readinglist.json";
+
+reading_json <- fromJSON(json_path)
+reading_json
+                     
+class(reading_json)
+str(reading_json)
+```
