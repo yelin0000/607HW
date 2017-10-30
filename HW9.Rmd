@@ -1,0 +1,67 @@
+---
+title: "HW9 - NYT API"
+author: "Lin Ye"
+date: "October 28, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("httr")
+library("rjson")
+library("data.table")
+
+
+```
+
+
+The purpose of this assignment is to use API to get list from New York Times hardcover fiction books that published on Oct 1 2017.
+
+First, I generated an API key. And then we pinged the site using the key
+```{r}
+
+result <- GET("http://api.nytimes.com/svc/books/v2/lists.json?list=hardcover-fiction&published_date=2017-10-01&api-key=35f595ebcfac41418e6bed2d5d02d7da")
+names(result)
+
+
+```
+
+Once we returned the search results, we parse out the result and store into a list
+
+```{r}
+content <- content(result, as ="text")
+
+
+json.list <- fromJSON(content)
+
+names(json.list)
+```
+
+Lastly, we transform the list into a data frame. 
+```{r}
+
+json.result <-json.list$results
+
+
+json.df <-as.data.frame( json.result)
+
+head(json.df)
+```
+
+Let's look at the books from first list
+```{r}
+
+book.detail<-do.call("rbind",json.df$book_details)
+colnames(book.detail)
+
+book.detail
+
+```
+
+
+
+
+
+
+
+```
